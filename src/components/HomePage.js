@@ -130,7 +130,8 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
               <option value="">-- Pilih Produk --</option>
               <option value="Dimsum Colleyah">Dimsum Original - Rp 18.000</option>
               <option value="Dimsum Spesial">Dimsum Mentai - Rp 20.000</option>
-              <option value="Produk C - Paket Bundel">Paket Bundel Special - Rp 25.000</option>
+              <option value="Produk C - Paket Bundel">Paket Bundel Special Original- Rp 22.000</option>
+              <option value="Produk C - Paket Bundel">Paket Bundel Special Mentai- Rp 25.000</option>
             </select>
           </div>
           <div className="qris-container">
