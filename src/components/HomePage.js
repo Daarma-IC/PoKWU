@@ -74,7 +74,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
         fileData: fileData
       };
 
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuDYD1R36gtaQNBjb7z5ahCjFt5roqd-1vhRDNqUrj0o46yaXVYXTo02PoMCAIhBXn/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgMOeNpu7-8QUJoZYO0PUgV9dwKW0OAzko8rz1Dz-TBz2fresDDRcR6-GoHfXfhzZ6/exec";
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
