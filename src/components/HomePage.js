@@ -42,7 +42,8 @@ const LoadingModal = ({ isOpen }) => {
         </div>
         <h2 className="loading-title">Mengirim Pesanan...</h2>
         <p className="loading-description">
-          Mohon tunggu, data Anda sedang diproses
+          <p> Mohon tunggu, data Anda sedang diproses
+        </p>
         </p>
         <div className="loading-dots">
           <span></span>
@@ -295,7 +296,7 @@ function App() {
 
         .loading-overlay {
           position: fixed;
-          top: 0;
+          top: 60%;
           left: 0;
           right: 0;
           bottom: 0;
