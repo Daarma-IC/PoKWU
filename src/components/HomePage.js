@@ -180,6 +180,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
         </form>
       </div>
       
+      {/* 👇 INI YANG KURANG - LOADING MODAL */}
       <LoadingModal isOpen={isSubmitting} />
       
     </div>
@@ -231,26 +232,8 @@ function App() {
     <div className="App">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body { 
-          margin: 0; 
-          font-family: 'Inter', sans-serif; 
-          -webkit-font-smoothing: antialiased; 
-          -moz-osx-font-smoothing: grayscale; 
-          background-color: #F0F2F5; 
-          color: #333; 
-        }
-        
-        .App { 
-          text-align: center; 
-          position: relative; 
-          width: 100vw; 
-          height: 100vh; 
-          overflow: hidden; 
-        }
-        
+        body { margin: 0; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background-color: #F0F2F5; color: #333; }
+        .App { text-align: center; position: relative; width: 100vw; height: 100vh; overflow: hidden; }
         .page-container { 
           position: absolute; 
           width: 100%; 
@@ -264,93 +247,40 @@ function App() {
           transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; 
           overflow-y: auto;
         }
-        
         .page-container.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
         .page-container.visible { opacity: 1; transform: translateY(0); }
-        
         .homepage-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
         .homepage-header { margin-bottom: 40px; max-width: 600px; }
         .homepage-title { font-size: 2.5rem; font-weight: 800; color: #2c3e50; margin: 0 0 10px 0; }
         .homepage-subtitle { font-size: 1.1rem; color: #6c7a89; margin: 0; }
-        
         .registration-cards-wrapper { display: flex; justify-content: center; margin-bottom: 30px; }
-        
-        .widget-card { 
-          background: linear-gradient(145deg, #4CAF50, #388E3C); 
-          border-radius: 15px; 
-          padding: 30px; 
-          width: 100%; 
-          max-width: 300px; 
-          cursor: pointer; 
-          border: none; 
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); 
-          transition: transform 0.3s ease, box-shadow 0.3s ease; 
-          position: relative; 
-          overflow: hidden; 
-          text-align: center; 
-          color: white; 
-        }
-        
+        .widget-card { background: linear-gradient(145deg, #4CAF50, #388E3C); border-radius: 15px; padding: 30px; width: 100%; max-width: 300px; cursor: pointer; border: none; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; overflow: hidden; text-align: center; color: white; }
         .widget-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25); }
-        
-        .widget-icon { 
-          width: 50px; 
-          height: 50px; 
-          margin: 0 auto 20px auto; 
-          background-color: rgba(255, 255, 255, 0.15); 
-          border-radius: 50%; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          color: white; 
-        }
-        
+        .widget-icon { width: 50px; height: 50px; margin: 0 auto 20px auto; background-color: rgba(255, 255, 255, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; }
         .widget-icon svg { width: 28px; height: 28px; stroke-width: 2; }
         .widget-title { font-size: 1.5rem; font-weight: 700; margin: 0 0 10px 0; color: #ffffff; }
         .widget-description { color: #e0e0e0; line-height: 1.6; margin-bottom: 25px; font-size: 0.95rem; }
         .widget-button { background-color: rgba(0, 0, 0, 0.1); color: white; padding: 10px 20px; border-radius: 30px; font-weight: 600; transition: background-color 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.3); }
         .widget-card:hover .widget-button { background-color: rgba(0, 0, 0, 0.2); }
-        
         .preorder-container { width: 100%; max-width: 500px; position: relative; padding-bottom: 5rem; }
         .back-button { position: absolute; top: -40px; left: 0; background: none; border: none; color: #6c7a89; font-size: 1rem; cursor: pointer; transition: color 0.2s ease; z-index: 10; display: flex; align-items: center; gap: 5px; }
         .back-button:hover { color: #3B82F6; }
-        
         .form-card { background-color: #ffffff; padding: 30px; border-radius: 15px; border: 1px solid #e0e6ed; width: 100%; box-sizing: border-box; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); }
         .form-title { margin: 0 0 5px 0; font-size: 2rem; font-weight: 800; color: #2c3e50; }
         .form-subtitle { margin: 0 0 30px 0; color: #6c7a89; }
-        
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #2c3e50; }
         .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e0e6ed; background-color: #f9fbfd; color: #333; font-size: 1rem; box-sizing: border-box; transition: border-color 0.2s ease; }
         .input-group input:focus, .input-group select:focus { outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         .input-group input::placeholder { color: #9ca3af; }
-        
         .qris-container { text-align: center; margin: 25px 0; padding: 20px; background-color: #f9fbfd; border-radius: 8px; border: 1px dashed #e0e6ed; }
         .qris-container label { font-weight: 600; color: #2c3e50; display: block; margin-bottom: 15px; text-align: center; }
         .qris-placeholder { display: inline-block; padding: 10px; background-color: white; border-radius: 4px; border: 1px solid #e0e6ed; }
-        
+        .qris-placeholder p { margin: 5px 0 0 0; font-weight: bold; font-size: 0.9rem; color: #333; }
         .input-group input[type="file"] { background-color: #f9fbfd; border: 1px solid #e0e6ed; border-radius: 8px; padding: 8px; width: 100%; box-sizing: border-box; color: #6c7a89; font-family: 'Inter', sans-serif; }
         .input-group input[type="file"]::file-selector-button { margin-right: 15px; border: none; background: #3B82F6; padding: 8px 12px; border-radius: 4px; color: #fff; cursor: pointer; transition: background-color .2s ease-in-out; }
         .input-group input[type="file"]::file-selector-button:hover { background: #2563EB; }
-        
-        .submit-button { 
-          width: 100%; 
-          padding: 15px; 
-          border: none; 
-          border-radius: 8px; 
-          background-color: #4CAF50; 
-          color: white; 
-          font-size: 1.1rem; 
-          font-weight: 700; 
-          cursor: pointer; 
-          transition: background-color 0.3s ease, transform 0.1s ease; 
-          margin-top: 10px; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center; 
-          gap: 10px; 
-        }
-        
+        .submit-button { width: 100%; padding: 15px; border: none; border-radius: 8px; background-color: #4CAF50; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .submit-button:hover { background-color: #45a049; transform: translateY(-2px); }
         .submit-button:disabled { background-color: #cccccc; cursor: not-allowed; transform: none; }
 
@@ -363,8 +293,6 @@ function App() {
           animation: spin 0.6s linear infinite;
         }
 
-        /* LOADING MODAL - PERSIS SAMA DENGAN SUCCESS MODAL */
-        /* Loading Modal - TANPA Overlay, Cuma Pop-up */
         .loading-overlay {
           position: fixed;
           top: 0;
@@ -444,7 +372,6 @@ function App() {
           40% { transform: scale(1); opacity: 1; }
         }
 
-        /* SUCCESS MODAL */
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -533,7 +460,6 @@ function App() {
           .homepage-subtitle { font-size: 1rem; } 
           .widget-card { max-width: 90%; }
           .loading-card { max-width: 90%; padding: 40px 30px; }
-          .modal-card { max-width: 90%; padding: 30px 20px; }
         }
       `}</style>
       
