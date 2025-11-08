@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import qrisImage from '../image/qris.jpeg';
 
 // --- Komponen Halaman Utama ---
@@ -42,8 +42,7 @@ const LoadingModal = ({ isOpen }) => {
         </div>
         <h2 className="loading-title">Mengirim Pesanan...</h2>
         <p className="loading-description">
-          <p> Mohon tunggu, data Anda sedang diproses
-        </p>
+          Mohon tunggu, data Anda sedang diproses
         </p>
         <div className="loading-dots">
           <span></span>
@@ -63,6 +62,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
     email: '',
     phone: '',
     product: '',
+    quantity: 1,
     proof: null,
   });
 
@@ -82,6 +82,11 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
       return;
     }
     
+    if (formData.quantity < 1) {
+      alert('Kuantitas minimal 1!');
+      return;
+    }
+    
     setIsSubmitting(true);
     
     const reader = new FileReader();
@@ -94,12 +99,13 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
         email: formData.email,
         phone: formData.phone,
         product: formData.product,
+        quantity: formData.quantity,
         fileName: formData.proof.name,
         mimeType: formData.proof.type,
         fileData: fileData
       };
 
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgMOeNpu7-8QUJoZYO0PUgV9dwKW0OAzko8rz1Dz-TBz2fresDDRcR6-GoHfXfhzZ6/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzXvgqZFvk1ZGYkcxzyYgpGzBYZjWr8teZ53N3ZP-QtJhX5BPuDF3IW3RQKYzgXpsY/exec";
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
@@ -108,7 +114,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
       .then(res => {
         onSuccess(); 
         e.target.reset();
-        setFormData({ name: '', email: '', phone: '', product: '', proof: null });
+        setFormData({ name: '', email: '', phone: '', product: '', quantity: 1, proof: null });
       })
       .catch(err => {
         console.error("Error sending data:", err);
@@ -159,6 +165,44 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
               <option value="Paket Bundel Special Mentai - Rp 25.000">Paket Bundel Special Mentai - Rp 25.000</option>
             </select>
           </div>
+          
+          {/* Quantity Input dengan Tombol + dan - */}
+          <div className="input-group">
+            <label htmlFor="quantity">Jumlah Pesanan Anda</label>
+            <div className="quantity-input-wrapper">
+              <button 
+                type="button" 
+                className="quantity-btn quantity-btn-minus" 
+                onClick={() => {
+                  const newQty = Math.max(1, (formData.quantity || 1) - 1);
+                  setFormData(prev => ({ ...prev, quantity: newQty }));
+                }}
+              >
+                −
+              </button>
+              <input 
+                type="number" 
+                id="quantity" 
+                min="1" 
+                value={formData.quantity} 
+                placeholder="1" 
+                onChange={handleInputChange} 
+                required 
+                className="quantity-input"
+              />
+              <button 
+                type="button" 
+                className="quantity-btn quantity-btn-plus" 
+                onClick={() => {
+                  const newQty = (formData.quantity || 1) + 1;
+                  setFormData(prev => ({ ...prev, quantity: newQty }));
+                }}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          
           <div className="qris-container">
             <label>Scan untuk Membayar</label>
             <label>Mohon untuk ditampilkan rincian lengkapnya </label>
@@ -181,7 +225,6 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
         </form>
       </div>
       
-      {/* 👇 INI YANG KURANG - LOADING MODAL */}
       <LoadingModal isOpen={isSubmitting} />
       
     </div>
@@ -214,7 +257,14 @@ const SuccessModal = ({ isOpen, onClose }) => {
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
-  const [showSuccessModal, setShowSuccessModal] = useState(false); 
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  useEffect(() => {
+    setCurrentPage('home');
+    setShowSuccessModal(false);
+    sessionStorage.clear();
+    localStorage.clear();
+  }, []);
 
   const navigateTo = (page) => {
     setCurrentPage(page);
@@ -274,10 +324,76 @@ function App() {
         .input-group input, .input-group select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e0e6ed; background-color: #f9fbfd; color: #333; font-size: 1rem; box-sizing: border-box; transition: border-color 0.2s ease; }
         .input-group input:focus, .input-group select:focus { outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         .input-group input::placeholder { color: #9ca3af; }
+        
+        /* Quantity Input dengan Tombol + dan - */
+        .quantity-input-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 0;
+          border: 1px solid #e0e6ed;
+          border-radius: 8px;
+          background-color: #f9fbfd;
+          overflow: hidden;
+        }
+
+        .quantity-btn {
+          width: 45px;
+          height: 48px;
+          border: none;
+          background-color: #3B82F6;
+          color: white;
+          font-size: 1.5rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .quantity-btn:hover {
+          background-color: #2563EB;
+        }
+
+        .quantity-btn:active {
+          transform: scale(0.95);
+        }
+
+        .quantity-btn-minus {
+          border-radius: 8px 0 0 8px;
+        }
+
+        .quantity-btn-plus {
+          border-radius: 0 8px 8px 0;
+        }
+
+        .quantity-input {
+          flex: 1;
+          text-align: center;
+          border: none !important;
+          background-color: #f9fbfd !important;
+          padding: 12px 8px !important;
+          font-size: 1.1rem;
+          font-weight: 600;
+          box-shadow: none !important;
+          -moz-appearance: textfield;
+        }
+
+        .quantity-input::-webkit-outer-spin-button,
+        .quantity-input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        .quantity-input:focus {
+          outline: none;
+          box-shadow: none !important;
+        }
+        
         .qris-container { text-align: center; margin: 25px 0; padding: 20px; background-color: #f9fbfd; border-radius: 8px; border: 1px dashed #e0e6ed; }
         .qris-container label { font-weight: 600; color: #2c3e50; display: block; margin-bottom: 15px; text-align: center; }
         .qris-placeholder { display: inline-block; padding: 10px; background-color: white; border-radius: 4px; border: 1px solid #e0e6ed; }
-        .qris-placeholder p { margin: 5px 0 0 0; font-weight: bold; font-size: 0.9rem; color: #333; }
         .input-group input[type="file"] { background-color: #f9fbfd; border: 1px solid #e0e6ed; border-radius: 8px; padding: 8px; width: 100%; box-sizing: border-box; color: #6c7a89; font-family: 'Inter', sans-serif; }
         .input-group input[type="file"]::file-selector-button { margin-right: 15px; border: none; background: #3B82F6; padding: 8px 12px; border-radius: 4px; color: #fff; cursor: pointer; transition: background-color .2s ease-in-out; }
         .input-group input[type="file"]::file-selector-button:hover { background: #2563EB; }
