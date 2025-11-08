@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import HomePage from './components/HomePage';
-import PreOrderPage from './components/PreOrderPage';
 import './App.css';
 
 function App() {
@@ -12,14 +11,9 @@ function App() {
 
   return (
     <div className="App">
-      {/* Container untuk HomePage */}
+      {/* Hanya tampilkan HomePage */}
       <div className={`page-container ${currentPage === 'home' ? 'visible' : 'hidden'}`}>
         <HomePage onWidgetClick={() => navigateTo('form')} />
-      </div>
-
-      {/* Container untuk PreOrderPage */}
-      <div className={`page-container ${currentPage === 'form' ? 'visible' : 'hidden'}`}>
-        <PreOrderPage onBack={() => navigateTo('home')} />
       </div>
     </div>
   );
