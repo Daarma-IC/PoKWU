@@ -159,7 +159,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
             <label htmlFor="product">Pilihan Produk</label>
             <select id="product" onChange={handleInputChange} required>
               <option value="">-- Pilih Produk --</option>
-              <option value="Dimsum Original - Rp 18.000">Dimsum Original - Rp 18.000</option>
+              {/* <option value="Dimsum Original - Rp 18.000">Dimsum Original - Rp 18.000</option> */}
               <option value="Dimsum Mentai - Rp 20.000">Dimsum Mentai - Rp 20.000</option>
               <option value="Paket Bundel Special Original - Rp 22.000">Paket Bundel Special Original - Rp 22.000</option>
               <option value="Paket Bundel Special Mentai - Rp 25.000">Paket Bundel Special Mentai - Rp 25.000</option>
