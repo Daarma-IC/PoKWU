@@ -5,7 +5,7 @@ const HomePage = ({ onWidgetClick }) => {
   return (
     <div className="homepage-container">
       <header className="homepage-header">
-        <h1 className="homepage-title">Selamat Datang di Toko Kami</h1>
+        <h1 className="homepage-title">Selamat Datang</h1>
         <p className="homepage-subtitle">Jangan lewatkan kesempatan untuk mendapatkan produk nikmat kami.</p>
       </header>
 
@@ -170,8 +170,8 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
             <select id="product" onChange={handleInputChange} required>
               <option value="">-- Pilih Produk --</option>
               <option value="Dimsum Mentai - Rp 20.000">Dimsum Mentai - Rp 20.000</option>
-              <option value="Paket Bundel Special Original - Rp 22.000">Paket Bundel Special Original - Rp 22.000</option>
-              <option value="Paket Bundel Special Mentai - Rp 25.000">Paket Bundel Special Mentai - Rp 25.000</option>
+              <option value="Paket Bundel Special Original - Rp 22.000">Paket Bundel Special Dimsum Original - Rp 22.000</option>
+              <option value="Paket Bundel Special Mentai - Rp 25.000">Paket Bundel Special Dimsum Mentai - Rp 25.000</option>
             </select>
           </div>
 
