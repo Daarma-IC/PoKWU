@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import qrisImage from '../image/qris.jpeg';
 
-// --- Komponen Halaman Utama ---
 const HomePage = ({ onWidgetClick }) => {
   return (
     <div className="homepage-container">
@@ -9,7 +8,7 @@ const HomePage = ({ onWidgetClick }) => {
         <h1 className="homepage-title">Selamat Datang di Toko Kami</h1>
         <p className="homepage-subtitle">Jangan lewatkan kesempatan untuk mendapatkan produk nikmat kami.</p>
       </header>
-      
+
       <div className="registration-cards-wrapper">
         <div className="widget-card" onClick={onWidgetClick}>
           <div className="widget-icon">
@@ -30,7 +29,6 @@ const HomePage = ({ onWidgetClick }) => {
   );
 };
 
-// --- Komponen Loading Modal ---
 const LoadingModal = ({ isOpen }) => {
   if (!isOpen) return null;
 
@@ -55,12 +53,13 @@ const LoadingModal = ({ isOpen }) => {
 };
 
 // --- Komponen Halaman Pre-Order ---
-const PreOrderPage = ({ onBack, onSuccess }) => { 
+const PreOrderPage = ({ onBack, onSuccess }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
+    address: '',
     product: '',
     quantity: 1,
     proof: null,
@@ -74,30 +73,31 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
   const handleFileChange = (e) => {
     setFormData(prev => ({ ...prev, proof: e.target.files[0] }));
   };
-  
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!formData.proof) {
-      alert('Mohon unggah bukti pembayaran.'); 
+      alert('Mohon unggah bukti pembayaran.');
       return;
     }
-    
+
     if (formData.quantity < 1) {
       alert('Kuantitas minimal 1!');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     const reader = new FileReader();
     reader.readAsDataURL(formData.proof);
     reader.onload = () => {
       const fileData = reader.result.split('base64,')[1];
-      
+
       const payload = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
+        address: formData.address,
         product: formData.product,
         quantity: formData.quantity,
         fileName: formData.proof.name,
@@ -105,16 +105,16 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
         fileData: fileData
       };
 
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzXvgqZFvk1ZGYkcxzyYgpGzBYZjWr8teZ53N3ZP-QtJhX5BPuDF3IW3RQKYzgXpsY/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfxalJAqSjS0fjufjpHs4Ud5QtwSFsvuVlT4E4Q9TFG5FydND2CkHZRh7J6qdd8oFM/exec";
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify(payload)
       })
       .then(res => {
-        onSuccess(); 
+        onSuccess();
         e.target.reset();
-        setFormData({ name: '', email: '', phone: '', product: '', quantity: 1, proof: null });
+        setFormData({ name: '', email: '', phone: '', address: '', product: '', quantity: 1, proof: null });
       })
       .catch(err => {
         console.error("Error sending data:", err);
@@ -126,9 +126,9 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
     };
 
     reader.onerror = (error) => {
-        console.error("Error reading file:", error);
-        alert('Gagal membaca file, mohon coba lagi.');
-        setIsSubmitting(false);
+      console.error("Error reading file:", error);
+      alert('Gagal membaca file, mohon coba lagi.');
+      setIsSubmitting(false);
     }
   };
 
@@ -156,23 +156,31 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
             <input type="tel" id="phone" placeholder="Contoh: 08123456789" onChange={handleInputChange} required />
           </div>
           <div className="input-group">
+            <label htmlFor="address">Alamat Lengkap</label>
+            <textarea
+              id="address"
+              placeholder="Masukkan alamat lengkap untuk pengiriman"
+              onChange={handleInputChange}
+              rows="3"
+              required
+            />
+          </div>
+          <div className="input-group">
             <label htmlFor="product">Pilihan Produk</label>
             <select id="product" onChange={handleInputChange} required>
               <option value="">-- Pilih Produk --</option>
-              {/* <option value="Dimsum Original - Rp 18.000">Dimsum Original - Rp 18.000</option> */}
               <option value="Dimsum Mentai - Rp 20.000">Dimsum Mentai - Rp 20.000</option>
               <option value="Paket Bundel Special Original - Rp 22.000">Paket Bundel Special Original - Rp 22.000</option>
               <option value="Paket Bundel Special Mentai - Rp 25.000">Paket Bundel Special Mentai - Rp 25.000</option>
             </select>
           </div>
-          
-          {/* Quantity Input dengan Tombol + dan - */}
+
           <div className="input-group">
             <label htmlFor="quantity">Jumlah Pesanan Anda</label>
             <div className="quantity-input-wrapper">
-              <button 
-                type="button" 
-                className="quantity-btn quantity-btn-minus" 
+              <button
+                type="button"
+                className="quantity-btn quantity-btn-minus"
                 onClick={() => {
                   const newQty = Math.max(1, (formData.quantity || 1) - 1);
                   setFormData(prev => ({ ...prev, quantity: newQty }));
@@ -180,19 +188,19 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
               >
                 −
               </button>
-              <input 
-                type="number" 
-                id="quantity" 
-                min="1" 
-                value={formData.quantity} 
-                placeholder="1" 
-                onChange={handleInputChange} 
-                required 
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                value={formData.quantity}
+                placeholder="1"
+                onChange={handleInputChange}
+                required
                 className="quantity-input"
               />
-              <button 
-                type="button" 
-                className="quantity-btn quantity-btn-plus" 
+              <button
+                type="button"
+                className="quantity-btn quantity-btn-plus"
                 onClick={() => {
                   const newQty = (formData.quantity || 1) + 1;
                   setFormData(prev => ({ ...prev, quantity: newQty }));
@@ -202,7 +210,7 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
               </button>
             </div>
           </div>
-          
+
           <div className="qris-container">
             <label>Scan untuk Membayar</label>
             <label>Mohon untuk ditampilkan rincian lengkapnya </label>
@@ -224,14 +232,12 @@ const PreOrderPage = ({ onBack, onSuccess }) => {
           </button>
         </form>
       </div>
-      
+
       <LoadingModal isOpen={isSubmitting} />
-      
     </div>
   );
 };
 
-// --- Komponen Modal Keberhasilan ---
 const SuccessModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
@@ -276,7 +282,7 @@ function App() {
 
   const handleCloseModal = () => {
     setShowSuccessModal(false);
-    navigateTo('home'); 
+    navigateTo('home');
   };
 
   return (
@@ -325,7 +331,31 @@ function App() {
         .input-group input:focus, .input-group select:focus { outline: none; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         .input-group input::placeholder { color: #9ca3af; }
         
-        /* Quantity Input dengan Tombol + dan - */
+        .input-group textarea {
+          width: 100%;
+          padding: 12px;
+          border-radius: 8px;
+          border: 1px solid #e0e6ed;
+          background-color: #f9fbfd;
+          color: #333;
+          font-size: 1rem;
+          box-sizing: border-box;
+          transition: border-color 0.2s ease;
+          font-family: 'Inter', sans-serif;
+          resize: vertical;
+          min-height: 80px;
+        }
+        
+        .input-group textarea:focus {
+          outline: none;
+          border-color: #3B82F6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .input-group textarea::placeholder {
+          color: #9ca3af;
+        }
+        
         .quantity-input-wrapper {
           display: flex;
           align-items: center;
@@ -335,7 +365,7 @@ function App() {
           background-color: #f9fbfd;
           overflow: hidden;
         }
-
+        
         .quantity-btn {
           width: 45px;
           height: 48px;
@@ -351,23 +381,23 @@ function App() {
           justify-content: center;
           flex-shrink: 0;
         }
-
+        
         .quantity-btn:hover {
           background-color: #2563EB;
         }
-
+        
         .quantity-btn:active {
           transform: scale(0.95);
         }
-
+        
         .quantity-btn-minus {
           border-radius: 8px 0 0 8px;
         }
-
+        
         .quantity-btn-plus {
           border-radius: 0 8px 8px 0;
         }
-
+        
         .quantity-input {
           flex: 1;
           text-align: center;
@@ -379,28 +409,87 @@ function App() {
           box-shadow: none !important;
           -moz-appearance: textfield;
         }
-
-        .quantity-input::-webkit-outer-spin-button,
-        .quantity-input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-
-        .quantity-input:focus {
-          outline: none;
-          box-shadow: none !important;
+        
+        .qris-container {
+          text-align: center;
+          margin: 25px 0;
+          padding: 20px;
+          background-color: #f9fbfd;
+          border-radius: 8px;
+          border: 1px dashed #e0e6ed;
         }
         
-        .qris-container { text-align: center; margin: 25px 0; padding: 20px; background-color: #f9fbfd; border-radius: 8px; border: 1px dashed #e0e6ed; }
-        .qris-container label { font-weight: 600; color: #2c3e50; display: block; margin-bottom: 15px; text-align: center; }
-        .qris-placeholder { display: inline-block; padding: 10px; background-color: white; border-radius: 4px; border: 1px solid #e0e6ed; }
-        .input-group input[type="file"] { background-color: #f9fbfd; border: 1px solid #e0e6ed; border-radius: 8px; padding: 8px; width: 100%; box-sizing: border-box; color: #6c7a89; font-family: 'Inter', sans-serif; }
-        .input-group input[type="file"]::file-selector-button { margin-right: 15px; border: none; background: #3B82F6; padding: 8px 12px; border-radius: 4px; color: #fff; cursor: pointer; transition: background-color .2s ease-in-out; }
-        .input-group input[type="file"]::file-selector-button:hover { background: #2563EB; }
-        .submit-button { width: 100%; padding: 15px; border: none; border-radius: 8px; background-color: #4CAF50; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background-color 0.3s ease, transform 0.1s ease; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .submit-button:hover { background-color: #45a049; transform: translateY(-2px); }
-        .submit-button:disabled { background-color: #cccccc; cursor: not-allowed; transform: none; }
-
+        .qris-container label {
+          font-weight: 600;
+          color: #2c3e50;
+          display: block;
+          margin-bottom: 15px;
+          text-align: center;
+        }
+        
+        .qris-placeholder {
+          display: inline-block;
+          padding: 10px;
+          background-color: white;
+          border-radius: 4px;
+          border: 1px solid #e0e6ed;
+        }
+        
+        .input-group input[type="file"] {
+          background-color: #f9fbfd;
+          border: 1px solid #e0e6ed;
+          border-radius: 8px;
+          padding: 8px;
+          width: 100%;
+          box-sizing: border-box;
+          color: #6c7a89;
+          font-family: 'Inter', sans-serif;
+        }
+        
+        .input-group input[type="file"]::file-selector-button {
+          margin-right: 15px;
+          border: none;
+          background: #3B82F6;
+          padding: 8px 12px;
+          border-radius: 4px;
+          color: #fff;
+          cursor: pointer;
+          transition: background-color .2s ease-in-out;
+        }
+        
+        .input-group input[type="file"]::file-selector-button:hover {
+          background: #2563EB;
+        }
+        
+        .submit-button {
+          width: 100%;
+          padding: 15px;
+          border: none;
+          border-radius: 8px;
+          background-color: #4CAF50;
+          color: white;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background-color 0.3s ease, transform 0.1s ease;
+          margin-top: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+        
+        .submit-button:hover {
+          background-color: #45a049;
+          transform: translateY(-2px);
+        }
+        
+        .submit-button:disabled {
+          background-color: #cccccc;
+          cursor: not-allowed;
+          transform: none;
+        }
+        
         .button-spinner {
           width: 16px;
           height: 16px;
@@ -409,10 +498,10 @@ function App() {
           border-radius: 50%;
           animation: spin 0.6s linear infinite;
         }
-
+        
         .loading-overlay {
           position: fixed;
-          top: 60%;
+          top: 120%;
           left: 0;
           right: 0;
           bottom: 0;
@@ -434,13 +523,13 @@ function App() {
           animation: modal-appear 0.3s ease-out;
           pointer-events: all; /* Cuma card yang bisa diklik */
         }
-
+        
         .loading-spinner {
           width: 80px;
           height: 80px;
           margin: 0 auto 25px auto;
         }
-
+        
         .spinner {
           width: 80px;
           height: 80px;
@@ -449,30 +538,30 @@ function App() {
           border-radius: 50%;
           animation: spin 1s linear infinite;
         }
-
+        
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
-
+        
         .loading-title {
           font-size: 1.6rem;
           font-weight: 700;
           color: #1f2937;
           margin: 0 0 10px 0;
         }
-
+        
         .loading-description {
           color: #6b7280;
           margin-bottom: 25px;
           line-height: 1.5;
         }
-
+        
         .loading-dots {
           display: flex;
           justify-content: center;
           gap: 8px;
         }
-
+        
         .loading-dots span {
           width: 10px;
           height: 10px;
@@ -480,15 +569,15 @@ function App() {
           border-radius: 50%;
           animation: bounce 1.4s infinite ease-in-out both;
         }
-
+        
         .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
         .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
-
+        
         @keyframes bounce {
           0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
           40% { transform: scale(1); opacity: 1; }
         }
-
+        
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -502,7 +591,7 @@ function App() {
           z-index: 1000;
           backdrop-filter: blur(4px);
         }
-
+        
         .modal-card {
           background-color: white;
           padding: 40px;
@@ -513,7 +602,7 @@ function App() {
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
           animation: modal-appear 0.3s ease-out;
         }
-
+        
         @keyframes modal-appear {
           from {
             transform: scale(0.9) translateY(-20px);
@@ -524,7 +613,7 @@ function App() {
             opacity: 1;
           }
         }
-
+        
         .modal-icon {
           width: 70px;
           height: 70px;
@@ -536,25 +625,25 @@ function App() {
           justify-content: center;
           color: #4CAF50;
         }
-
+        
         .modal-icon svg {
           width: 40px;
           height: 40px;
         }
-
+        
         .modal-title {
           font-size: 1.8rem;
           font-weight: 700;
           color: #1f2937;
           margin: 0 0 10px 0;
         }
-
+        
         .modal-description {
           color: #6b7280;
           margin-bottom: 30px;
           line-height: 1.6;
         }
-
+        
         .modal-button {
           width: 100%;
           padding: 12px;
@@ -567,11 +656,11 @@ function App() {
           cursor: pointer;
           transition: background-color 0.2s;
         }
-
+        
         .modal-button:hover {
           background-color: #45a049;
         }
-
+        
         @media (max-width: 768px) { 
           .homepage-title { font-size: 2rem; } 
           .homepage-subtitle { font-size: 1rem; } 
