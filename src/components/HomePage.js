@@ -18,7 +18,7 @@ const HomePage = ({ onWidgetClick }) => {
           </div>
           <h2 className="widget-title">Pre-Order Dibuka!</h2>
           <p className="widget-description">
-            Klik di sini untuk melakukan pemesanan produk kami. Stok terbatas!
+            Klik disini untuk melakukan pemesanan produk kami. Stok terbatas!
           </p>
           <div className="widget-button">
             Pesan Sekarang
